@@ -1,12 +1,8 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/cloudStorageScreen.dart';
 import 'package:flutter_firebase/notificationService.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
-import 'package:timezone/timezone.dart';
-import 'package:timezone/data/latest_all.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -18,10 +14,54 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final List<String> menu = ["Cloud Storage"];
 
+  late DateTime current = DateTime.now();
+
   @override
   void initState() {
     NotificationService.intitNotification();
     super.initState();
+  }
+
+  StreamSubscription<DateTime>? streamSubscription;
+
+  List<DateTime> startTimes = [
+    DateTime(2022, 2, 5, 16, 20),
+    DateTime(2022, 2, 5, 16, 30),
+    DateTime(2022, 2, 5, 16, 40)
+  ];
+
+  void setTimeListener() {
+    current = DateTime.now();
+    Stream<DateTime> timer = Stream.periodic(Duration(minutes: 1), (i) {
+      current = current.add(Duration(minutes: 1));
+      return current;
+    });
+    streamSubscription = timer.listen((data) {
+      final startedTracks = startTimes
+          .where((element) => element.difference(DateTime.now()).isNegative)
+          .toList();
+      print(startedTracks.length);
+
+      if (startedTracks.isNotEmpty) {
+        int currentPlaying = -1;
+        for (var i = 0; i < startedTracks.length; i++) {
+          if (DateTime.now().isAfter(startedTracks[i]) &&
+              DateTime.now()
+                  .isBefore(startedTracks[i].add(Duration(minutes: 10)))) {
+            currentPlaying = i;
+            break;
+          }
+        }
+
+        print("Current playing index is $currentPlaying");
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    streamSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -31,15 +71,16 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("Flutter Firebase"),
       ),
       floatingActionButton: FloatingActionButton(onPressed: () async {
-        String url = Platform.isAndroid
-            ? "https://play.google.com/store/apps/details?id=com.wrteam.flutterquiz"
-            : "";
-        try {
-          bool canOpen = await canLaunch(url);
-          if (canOpen) {
-            launch(url);
-          }
-        } catch (e) {}
+        setTimeListener();
+        // String url = Platform.isAndroid
+        //     ? "https://play.google.com/store/apps/details?id=com.wrteam.flutterquiz"
+        //     : "";
+        // try {
+        //   bool canOpen = await canLaunch(url);
+        //   if (canOpen) {
+        //     launch(url);
+        //   }
+        // } catch (e) {}
 
         // //NotificationService.createScheduleNotification();
 
