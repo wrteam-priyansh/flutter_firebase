@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/cloudStorageScreen.dart';
 import 'package:flutter_firebase/notificationService.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/timezone.dart';
 import 'package:timezone/data/latest_all.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -28,24 +31,34 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("Flutter Firebase"),
       ),
       floatingActionButton: FloatingActionButton(onPressed: () async {
-        //NotificationService.createScheduleNotification();
+        String url = Platform.isAndroid
+            ? "https://play.google.com/store/apps/details?id=com.wrteam.flutterquiz"
+            : "";
+        try {
+          bool canOpen = await canLaunch(url);
+          if (canOpen) {
+            launch(url);
+          }
+        } catch (e) {}
 
-        initializeTimeZones();
+        // //NotificationService.createScheduleNotification();
 
-        //current time zone
-        String localTimezone = await FlutterNativeTimezone.getLocalTimezone();
-        DateTime dateTime = DateTime(2022, 2, 1, 14, 45);
+        // initializeTimeZones();
 
-        setLocalLocation(getLocation(localTimezone));
+        // //current time zone
+        // String localTimezone = await FlutterNativeTimezone.getLocalTimezone();
+        // DateTime dateTime = DateTime(2022, 2, 1, 14, 45);
 
-        //indian time zone
-        TZDateTime indianStandraTimeDate =
-            TZDateTime.from(dateTime, getLocation("Asia/Kolkata"));
+        // setLocalLocation(getLocation(localTimezone));
 
-        TZDateTime localTimeZoneDatetime =
-            TZDateTime.from(indianStandraTimeDate, local); //"Asia/Karachi"
+        // //indian time zone
+        // TZDateTime indianStandraTimeDate =
+        //     TZDateTime.from(dateTime, getLocation("Asia/Kolkata"));
 
-        print(localTimeZoneDatetime.minute); // 0 to 23 hour
+        // TZDateTime localTimeZoneDatetime =
+        //     TZDateTime.from(indianStandraTimeDate, local); //"Asia/Karachi"
+
+        // print(localTimeZoneDatetime.minute); // 0 to 23 hour
 
         //TZDateTime nextDate = timeZoneDatetime.add(Duration(minutes: 120));
 
