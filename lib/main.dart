@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/feature/feedbacksProvider.dart';
 import 'package:flutter_firebase/feature/managePlaylistProvider.dart';
 import 'package:flutter_firebase/feature/utilityDataProvider.dart';
 import 'package:flutter_firebase/homeScreen.dart';
@@ -25,6 +26,8 @@ class MyApp extends StatelessWidget {
             create: (_) => UtilityDataProvider()),
         ChangeNotifierProvider<ManagePlaylistProvider>(
             create: (_) => ManagePlaylistProvider()),
+        ChangeNotifierProvider<FeedbacksProvider>(
+            create: (_) => FeedbacksProvider()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

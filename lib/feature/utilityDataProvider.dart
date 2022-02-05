@@ -19,6 +19,12 @@ class UtilityDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateStartTimeDate(String startTime, String startDate) {
+    utilityDataModel = utilityDataModel.copyWith(
+        newStartDate: startDate, newStartTime: startTime);
+    notifyListeners();
+  }
+
   Future<void> loadUtilityData() async {
     try {
       //
